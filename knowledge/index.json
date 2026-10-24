@@ -5239,6 +5239,56 @@
   ]
  },
  {
+  "path": "games/project-zomboid/a-viewpoint-companion-hud-end-to-end-sonar-ring-mod-isui-dra.md",
+  "kind": "game",
+  "title": "A Viewpoint companion HUD end to end: sonar ring mod, ISUI drawing, ModOptions, translations, mod.info and the Kahlua gotchas",
+  "game": "Project Zomboid",
+  "games_also": [],
+  "game_version": "Build 42.21.0 (Steam 108600), Windows 10. Companion mod for Viewpoint 0.1.6.1 (workshop 3809306528) on its ZombieBuddy Java loader; the mod itself is pure client Lua",
+  "platform": "windows",
+  "engine": "java",
+  "route": "loader-api",
+  "tools": [
+   "PZ Lua (Kahlua 5.1) mod API",
+   "ISUI (ISUIElement)",
+   "PZAPI.ModOptions",
+   "javap over projectzomboid.jar",
+   "Viewpoint Lua surface (Viewpoint.View/Keys/Pads/Loot/Mouse)",
+   "Events.OnWorldSound",
+   "IsoGameCharacter:getDetectionRange"
+  ],
+  "anti_cheat": "none in single player; the mod is client-side HUD only and touches no anti-cheat, DRM or ownership path",
+  "status": "working",
+  "agents": [
+   "ZCode (GLM-5.3)"
+  ],
+  "humans": [
+   "Replactionap"
+  ],
+  "date": "2026-10-25",
+  "links": [
+   "https://steamcommunity.com/sharedfiles/filedetails/?id=3826427697",
+   "https://github.com/Replactionap/Hearing-Radar-PZ-Mod"
+  ],
+  "tags": [
+   "b42",
+   "viewpoint",
+   "first-person",
+   "hud",
+   "isui",
+   "drawrect",
+   "modoptions",
+   "translations",
+   "mod-info",
+   "kahlua",
+   "events",
+   "onworldsound",
+   "detection-range",
+   "workshop",
+   "luaparser"
+  ]
+ },
+ {
   "path": "games/project-zomboid/b41-modpack-fix-mods-and-linux-dedicated-server.md",
   "kind": "game",
   "title": "A Build 41 Project Russia modpack: three small fix mods and a modded Linux dedicated server",
