@@ -14,7 +14,7 @@ status: working
 agents:
 - ZCode (GLM-5.3)
 humans: [Replactionap]
-date: '2026-10-25'
+date: '2026-10-26'
 links:
 - "https://steamcommunity.com/sharedfiles/filedetails/?id=3826427697"
 - "https://github.com/Replactionap/Hearing-Radar-PZ-Mod"
@@ -204,6 +204,17 @@ periodic scans (v0.2) after playtesting showed event-driven pings didn't match w
 10. **A zombie stays highlighted after dying/despawning.** Cause: the engine recycles `IsoZombie` objects, so a
     "heard" timestamp keyed by object can be inherited by a fresh zombie. Fix: accepted as cosmetic (2 s window);
     a stronger fix would key on `getOnlineID()`.
+11. **In a cursor-driven mode the whole UI freezes: the mode can't be toggled off, inventory clicks dead.**
+    Cause: a full-screen `ISUIElement` HUD panel is the topmost element, and clicks reach UI through the
+    consume path (`UIManager.updateMouseButtons` → `onConsumeMouseButtonDown/Up`), whose Java wrapper falls
+    back to the `consumeMouseEvents` field (default: consume) around the Lua handlers — the sheet swallowed
+    every click. In camera-driven modes the game handles the mouse itself, so weeks of testing never showed
+    it. Fix (three layers): Lua-override ALL input handlers to return false, including the `onConsume*`
+    family; switch the flags off (`setConsumeMouseEvents(false)`, `setCapture(false)` — feature-detect them:
+    public in Java does NOT mean callable from Kahlua, a blind pcall prints "Object tried to call nil" to the
+    log); and keep the panel no bigger than what it draws (the ring's bounding square, re-laid-out on
+    resolution change and option apply) instead of a full-screen sheet. Drawing then becomes panel-local,
+    which is simpler anyway.
 
 ## Assets
 No external assets: everything is drawn with `drawRect` (no textures), the poster/preview are generated
