@@ -9,27 +9,28 @@ platform: windows
 engine: java
 route: loader-api
 tools: ["PZ Lua (Kahlua 5.1) mod API", "ISUI (ISUIElement)", "PZAPI.ModOptions", "javap over projectzomboid.jar", "Viewpoint Lua surface (Viewpoint.View/Keys/Pads/Loot/Mouse)", "Events.OnWorldSound", "IsoGameCharacter:getDetectionRange"]
-anti_cheat: none in single player; the mod is client-side HUD only and touches no anti-cheat, DRM or ownership path
-status: working
+anti_cheat: "none on the client (servers run their own checks, Lua checksums included). The ring shows zombies the character can't see, so it's for single player; on a server only when the server's own mod list gives it to every player"
+status: released
 agents:
 - ZCode (GLM-5.3)
 humans: [Replactionap]
 date: '2026-10-26'
 links:
 - "https://steamcommunity.com/sharedfiles/filedetails/?id=3826427697"
-- "https://github.com/Replactionap/Hearing-Radar-PZ-Mod"
+- "https://steamcommunity.com/sharedfiles/filedetails/?id=3809306528"
 tags: [b42, viewpoint, first-person, hud, isui, drawrect, modoptions, translations, mod-info, kahlua, events, onworldsound, detection-range, workshop, luaparser]
 ---
 # A Viewpoint companion HUD end to end: sonar ring mod, ISUI drawing, ModOptions, translations, mod.info and the Kahlua gotchas
 
 > Built and shipped Hearing Radar (workshop item 3826427697): a client-side Lua HUD for Project Zomboid B42 that
-> draws a sonar ring around the crosshair showing zombies within the character's real hearing range, designed as a
-> companion for the Viewpoint first/third person camera mod. Route: pure Lua over the game's own event and Java
-> API surface — no Java classes, no loaders. Verified in the real game across all three camera modes by the human
-> playtesting; the log lines and several bytecode dives confirmed the engine facts below.
+> draws a sonar ring around the crosshair showing zombies within the character's hearing range (the game's own
+> `getDetectionRange()`, plus a 1-tile bonus by default) behind walls and on other floors too, designed as a
+> single-player companion for the Viewpoint first/third person camera mod. Route: pure Lua over the game's own
+> event and Java API surface — no Java classes, no loaders. Verified in the real game across all three camera
+> modes by the human playtesting; the log lines and several bytecode dives confirmed the engine facts below.
 
 ## Setup
-- Project Zomboid **42.21.0** from Steam (app 108600), Windows 10. User data in `C:\Users\<user>\Zomboid\`
+- Project Zomboid **42.21.0** from Steam (app 108600), Windows 10. User data in `%USERPROFILE%\Zomboid\`
   (`console.txt`, `Logs\<date>_DebugLog.txt`, `Saves\`, `mods\`, `Workshop\`).
 - Viewpoint **0.1.6.1** (workshop 3809306528) with its **ZombieBuddy** Java loader (`require=\ZombieBuddy`,
   `javaJarFile=media/java/client/Viewpoint.jar`). Not required to run Hearing Radar, but the mod was designed
@@ -38,6 +39,15 @@ tags: [b42, viewpoint, first-person, hud, isui, drawrect, modoptions, translatio
   `workshop.txt` + `preview.png` (256x256) + `Contents/mods/<id>/`. Published item: 3826427697.
 - Tooling: JDK 21 `javap` over `projectzomboid.jar` for every engine fact below; `luaparser` (pip) to
   syntax-check Lua offline; `um publish check` to lint the mod folder.
+- **Multiplayer: single player is the intended use.** The scan keeps every zombie in the cell within
+  `getDetectionRange()` plus the bonus (1 tile by default, 0-10 in the options), with no line-of-sight check and
+  2D distance. So the ring also shows zombies behind walls and closed doors (silent ones too), zombies on other
+  floors, and (with the default bonus) zombies past the game's own perception radius: information the
+  character doesn't have. The mod doesn't turn itself off in multiplayer. On a server, the server's `Mods=` list
+  decides which mods load for the session (seen on B41 in the
+  [B41 server note](b41-modpack-fix-mods-and-linux-dedicated-server.md); not re-checked on B42), so there it only
+  runs when it's in that list for every player. Add it only to a server you run, with the players agreeing, and
+  never side-load it onto a server that doesn't list it.
 
 ## Route and why
 Loader API via pure client Lua (`42/media/lua/client/<Mod>/`): the game IS the mod loader, all needed surface is
